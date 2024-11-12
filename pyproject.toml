@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "oraculo"
+version = "0.1.0"
+description = "A bot that suggests a new word in portuguese every day"
+authors = ["Manuel Fideles <manuel.fideles@redlightsoft.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+pytest = "^8.3.3"
+bs4 = "^0.0.2"
+
+[tool.poetry.group.dev.dependencies]
+requests = "^2.32.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
