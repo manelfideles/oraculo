@@ -11,6 +11,7 @@ python = "^3.12"
 requests = "^2.32.3"
 pytest = "^8.3.3"
 bs4 = "^0.0.2"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 requests = "^2.32.3"

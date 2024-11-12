@@ -1,0 +1,9 @@
+.pytest_cache
+.venv
+.env.example
+.gitignore
+docker-compose.yml
+poetry.lock
+poetry.toml
+pyproject.toml
+README.md

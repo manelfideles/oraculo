@@ -1,8 +1,12 @@
+import os
 import re
 from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def get_page(url: str) -> requests.Response:
@@ -34,7 +38,7 @@ def format_message(message_parts) -> str:
     return f"""
 [{datetime.now().isoformat()[:10]}]
 
-**{message_parts["word"]}**
+*{message_parts["word"]}*
 {message_parts["syllables"]}
 
 _{message_parts["word_class"]}_
@@ -43,7 +47,13 @@ _{message_parts["word_class"]}_
 
 
 def send_to_slack(msg: str) -> requests.Response:
-    print(msg)
+    webhook_url = os.environ.get("SLACK_INCOMING_WEBHOOK_URL")
+    try:
+        response = requests.post(webhook_url, json={"text": msg})
+        if response.status_code == 200:
+            print("Word of the day sent, check the #word-of-the-day channel.")
+    except Exception as e:
+        print(f"Could not send the word to Slack: {e}")
 
 
 if __name__ == "__main__":
