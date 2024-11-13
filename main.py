@@ -23,15 +23,28 @@ def extract_daily_word_div(page: requests.Response) -> Tag | NavigableString:
 def get_message_parts(div: Tag | NavigableString) -> dict:
     definitions = [
         re.sub(r"\s+", " ", s.text).strip()
-        for s in div.find_all("p", class_="py-4 dp-definicao-linha")
+        for s in div.find_all("p", class_=re.compile(r"dp-definicao-linha"))
     ]
 
-    return {
-        "word": div.find("span", class_="varpt").text,
-        "syllables": div.find("span", class_="titpalavra").text,
-        "word_class": div.find("h4", class_="varpt ml-12 pt-12 pb-4 --pequeno").text,
-        "definitions": definitions,
-    }
+    keys = ["word", "syllables", "pronounciation", "word_class"]
+    values = []
+    for elem, classname in [
+        ("span", "varpt"),
+        ("span", "titpalavra"),
+        ("span", "dp-ortoepia ortoepia dp-so"),
+        ("h4", "varpt ml-12 pt-12 pb-4 --pequeno"),
+    ]:
+        try:
+            field = div.find(elem, class_=classname)
+            text = re.sub(r"\s+", " ", field.text).strip()
+        except AttributeError:
+            text = ""
+        values.append(text)
+
+    message_parts = dict(zip(keys, values))
+    message_parts["definitions"] = definitions
+
+    return message_parts
 
 
 def format_message(message_parts) -> str:
@@ -40,6 +53,7 @@ def format_message(message_parts) -> str:
 
 *{message_parts["word"]}*
 {message_parts["syllables"]}
+{message_parts["pronounciation"]}
 
 _{message_parts["word_class"]}_
 {'\n'.join(message_parts['definitions'])}
@@ -61,4 +75,5 @@ if __name__ == "__main__":
     div = extract_daily_word_div(page)
     msg_parts = get_message_parts(div)
     word = format_message(msg_parts)
-    send_to_slack(word)
+    print(word)
+    # send_to_slack(word)
