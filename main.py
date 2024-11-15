@@ -35,7 +35,8 @@ def get_message_parts(div: Tag | NavigableString) -> dict:
         ("h4", "varpt ml-12 pt-12 pb-4 --pequeno"),
     ]:
         try:
-            field = div.find(elem, class_=classname)
+            field_contents = div.find(elem, class_=classname).contents
+            field = field_contents[int(len(field_contents) > 1)]
             text = re.sub(r"\s+", " ", field.text).strip()
         except AttributeError:
             text = ""
@@ -52,8 +53,7 @@ def format_message(message_parts) -> str:
 [{datetime.now().isoformat()[:10]}]
 
 *{message_parts["word"]}*
-{message_parts["syllables"]}
-{message_parts["pronounciation"]}
+{message_parts["pronounciation"] or message_parts["syllables"]}
 
 _{message_parts["word_class"]}_
 {'\n'.join(message_parts['definitions'])}
@@ -75,4 +75,4 @@ if __name__ == "__main__":
     div = extract_daily_word_div(page)
     msg_parts = get_message_parts(div)
     word = format_message(msg_parts)
-    send_to_slack(word)
+    # send_to_slack(word)
