@@ -75,4 +75,4 @@ if __name__ == "__main__":
     div = extract_daily_word_div(page)
     msg_parts = get_message_parts(div)
     word = format_message(msg_parts)
-    # send_to_slack(word)
+    send_to_slack(word)
