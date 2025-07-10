@@ -29,13 +29,19 @@ Run `docker compose up -d` in the root dir of the project.
 
 If you want to program the bot to run everyday at a specific time, you can look into either:
 
-**A.** Using an AWS lambda function (or similar) to run the bot on the cloud, which will cost _some_ money.
+**A.** Using an AWS lambda function (or similar) to run the bot on the cloud, which will cost _some_ money:
+
+You can find the infrastructure source code inside `terraform/`, which is set up to use AWS.
+Simply run `terraform apply` on the root to deploy the project.
+
+Note: I used LocalStack to test this infrastructure setup, which mocks AWS resources locally on your machine.
+Look up on Google to figure out how to change from using LocalStack to real AWS, shouldn't be too hard.
 
 or
 
-**B.** Using a cronjob in your host system, on-prem, which is free;
+**B.** Using a cronjob in your host system, on-prem, which is free:
 
-I opted for the latter. Inside the `scripts` folder, you'll find a `run.sh` file that allows you to self-host the bot, on a home server or similar.
+Inside the `scripts` folder, you'll find a `run.sh` file that allows you to self-host the bot, on a home server or similar.
 I chose to set up a cronjob to run the container periodically, but you may do as you please.
 
 If you too opt for this approach, consider the following steps:
