@@ -21,9 +21,12 @@ def extract_daily_word_div(page: requests.Response) -> Tag | NavigableString:
 
 
 def get_message_parts(div: Tag | NavigableString) -> dict:
+    # The original string (d.get_text(strip=True) will always 
+    # contain two occurrences of bracket-enclosed content (e.g. '[Brasil][Brasil] ...').
+    # This removes the first occurrence of bracket-enclosed content
     definitions = [
-        re.sub(r"\s+", " ", s.text).strip()
-        for s in div.find_all("p", class_=re.compile(r"dp-definicao-linha"))
+        re.sub(r'\[.*?\]', '', d.get_text(strip=True), 1) 
+        for d in div.select('div[class*="dp-definicao-linha"]')
     ]
 
     keys = ["word", "syllables", "pronounciation", "word_class"]
@@ -32,7 +35,7 @@ def get_message_parts(div: Tag | NavigableString) -> dict:
         ("span", "varpt"),
         ("span", "titpalavra"),
         ("span", "dp-ortoepia ortoepia dp-so"),
-        ("h4", "varpt ml-12 pt-12 pb-4 --pequeno"),
+        ("strong", "varpt ml-12 pt-12 pb-4 --pequeno"),
     ]:
         try:
             field_contents = div.find(elem, class_=classname).contents
@@ -43,7 +46,7 @@ def get_message_parts(div: Tag | NavigableString) -> dict:
         values.append(text)
 
     message_parts = dict(zip(keys, values))
-    message_parts["definitions"] = definitions
+    message_parts["definitions"] = list(set(definitions))
 
     return message_parts
 
